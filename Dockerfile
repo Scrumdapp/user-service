@@ -2,7 +2,7 @@
 FROM gradle:9.2.0-jdk21-corretto AS cache
 RUN mkdir -p /home/gradle/cache_home
 ENV GRADLE_USER_HOME=/home/gradle/cache_home
-COPY build.gradle settings.gradle /home/gradle/app/
+COPY build.gradle.kts settings.gradle.kts /home/gradle/app/
 COPY gradle /home/gradle/app/gradle
 WORKDIR /home/gradle/app
 RUN gradle dependencies --no-daemon
