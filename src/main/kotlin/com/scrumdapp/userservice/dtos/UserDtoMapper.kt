@@ -14,13 +14,29 @@ fun User.toResponseDto(): UserResponseDto {
     )
 }
 
+fun User.toPartialResponseDto(): PartialUserResponseDto {
+    return PartialUserResponseDto(
+        id = id,
+        firstName = firstName,
+        lastName = lastName,
+    )
+}
+
 fun User.patchFromDto(dto: UserPatchDto): User = apply {
     dto.firstName?.let { firstName = it }
     dto.lastName?.let { lastName = it }
     dto.avatar?.let { profilePicture = it }
 }
 
-fun UserCreateDto.toEntity(): User {
+fun User.patchFromDto(dto: UserUpsertDto): User = apply {
+    discordId = dto.discordId
+    role = Roles.valueOf(dto.role.uppercase())
+    dto.firstName?.let { firstName = it }
+    dto.lastName?.let { lastName = it }
+    dto.avatar?.let { profilePicture = it }
+}
+
+fun UserUpsertDto.toEntity(): User {
     return User().apply {
 
         discordId = this@toEntity.discordId

@@ -1,36 +1,65 @@
 package com.scrumdapp.userservice.controllers
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.jwt.Jwt
+import com.scrumdapp.passportplugin.annotations.Passport
+import com.scrumdapp.passportplugin.jwt.PassportContent
+import com.scrumdapp.userservice.dtos.UserUpsertDto
+import com.scrumdapp.userservice.dtos.UserPatchDto
+import com.scrumdapp.userservice.dtos.UserResponseDto
+import com.scrumdapp.userservice.services.UserService
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/users")
-class UserController {
+class UserController(
+    private val userService: UserService,
+) {
 
     @GetMapping("/@me")
-    fun getOwnUser() {
+    fun getSelf(
+        @Passport passport: PassportContent
+    ): UserResponseDto {
+        return userService.getById(passport.userId.toLong())
+    }
 
+    @PatchMapping("/@me")
+    fun patchSelf(
+        @Passport passport: PassportContent,
+        @Valid @RequestBody dto: UserPatchDto
+    ): UserResponseDto {
+        return userService.patchUser(dto, passport.userId.toLong())
     }
 
     @GetMapping("/{userId}")
     fun getUser(
         @PathVariable userId: Long,
-        @AuthenticationPrincipal jwt: Jwt
-    ) {
-        val role = SecurityContextHolder.getContext().authentication?.authorities
-        if (role != null && role.first().toString() == "ROLE_STUDENT") {
+        @Passport passport: PassportContent
+    ): UserResponseDto {
+        // Will have to protect this endpoint more
+        return userService.getById(userId)
+    }
 
+    // Generally only approached from the gateway
+    @PatchMapping("/{userId}")
+    fun updateUser(
+        @PathVariable userId: Long,
+        @Passport passport: PassportContent,
+        @RequestBody dto: UserUpsertDto
+    ): UserResponseDto {
+        if (passport.roles?.contains("GATEWAY") ?: false) {
+            throw Exception("Not access")
+        } else {
+            return userService.upsertUser(dto)
         }
     }
 
-    @PatchMapping("/{userId}")
-    fun updateUser(@PathVariable userId: Long) {
+    @PatchMapping("/{userId}/role")
+    fun updateUserRole(@PathVariable userId: Long) {
 
     }
 }

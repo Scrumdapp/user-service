@@ -1,31 +1,30 @@
 package com.scrumdapp.userservice.configs
 
+import com.scrumdapp.passportplugin.filters.PassportAuthFilter
+import com.scrumdapp.passportplugin.filters.usePassport
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-
-): WebMvcConfigurer {
+    private val passportAuthFilter: PassportAuthFilter
+) {
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { it.disable() }
-            .authorizeHttpRequests { it ->
+            .usePassport(passportAuthFilter)
+            .authorizeHttpRequests {
                 it.requestMatchers("/users/@me").hasAnyRole("STUDENT", "COACH")
-                it.requestMatchers("/users/{userId}").hasAnyRole("STUDENT", "COACH", "GATEWAY")
-            }
-            .oauth2ResourceServer { oauth2 ->
-                oauth2.jwt { jwt ->
-                    jwt.decoder(customJwtDecoder())
-                    jwt.jwtAuthenticationConverter(jwtAuthConverter())
-                }
+                it.requestMatchers(HttpMethod.GET, "/users/{userId}").hasAnyRole("STUDENT", "COACH", "GATEWAY")
+                it.requestMatchers(HttpMethod.PATCH, "/users/{userId}").hasRole("GATEWAY")
+                it.requestMatchers("/users/{userId}/role").hasRole("GATEWAY")
             }
 
         return http.build()
