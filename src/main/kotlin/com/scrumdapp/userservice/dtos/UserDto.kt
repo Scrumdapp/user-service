@@ -5,17 +5,15 @@ import jakarta.validation.constraints.Size
 
 data class UserResponseDto(
     val id: Long,
-    val discordId: Long?,
-    val firstName: String? = null,
-    val lastName: String? = null,
+    val discordId: Long,
+    val name: String? = null,
     val avatar: String? = null,
     val role: String
 )
 
 data class PartialUserResponseDto(
     val id: Long,
-    val firstName: String? = null,
-    val lastName: String? = null,
+    val name: String? = null,
 )
 
 data class UserPatchDto(
@@ -31,8 +29,7 @@ data class UserPatchDto(
 data class UserUpsertDto(
 
     val discordId: Long,
-    val firstName: String? = null,
-    val lastName: String? = null,
+    val name: String? = null,
     val avatar: String? = null,
     val role: String
 )

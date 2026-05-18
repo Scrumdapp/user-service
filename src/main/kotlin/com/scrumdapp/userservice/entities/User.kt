@@ -1,5 +1,6 @@
 package com.scrumdapp.userservice.entities
 
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -7,7 +8,6 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.springframework.stereotype.Repository
 
 enum class Roles {
     STUDENT, COACH
@@ -21,11 +21,11 @@ class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     val id: Long = 0
 
-    var discordId: Long? = null
+    @Column(unique = true, nullable = false)
+    var discordId: Long = 0
 
     // Encrypt these values
-    var firstName: String? = null
-    var lastName: String? = null
+    var name: String? = null
 
     var profilePicture: String? = null
 

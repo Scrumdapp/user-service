@@ -22,9 +22,9 @@ class SecurityConfig(
             .usePassport(passportAuthFilter)
             .authorizeHttpRequests {
                 it.requestMatchers("/users/@me").hasAnyRole("STUDENT", "COACH")
-                it.requestMatchers(HttpMethod.GET, "/users/{userId}").hasAnyRole("STUDENT", "COACH", "GATEWAY")
-                it.requestMatchers(HttpMethod.PATCH, "/users/{userId}").hasRole("GATEWAY")
-                it.requestMatchers("/users/{userId}/role").hasRole("GATEWAY")
+                it.requestMatchers(HttpMethod.GET, "/users/{userId}").hasAnyAuthority("STUDENT", "COACH", "GATEWAY")
+                it.requestMatchers("/users/gateway").hasAuthority("GATEWAY")
+                it.requestMatchers("/users/{userId}/role").hasAuthority("GATEWAY")
             }
 
         return http.build()

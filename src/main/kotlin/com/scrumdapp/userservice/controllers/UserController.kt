@@ -45,14 +45,14 @@ class UserController(
     }
 
     // Generally only approached from the gateway
-    @PatchMapping("/{userId}")
+    @PatchMapping("/gateway")
     fun updateUser(
-        @PathVariable userId: Long,
         @Passport passport: PassportContent,
         @RequestBody dto: UserUpsertDto
     ): UserResponseDto {
-        if (passport.roles?.contains("GATEWAY") ?: false) {
-            throw Exception("Not access")
+        val roles = passport.roles
+        if (!roles.isNullOrEmpty() && !roles.contains("GATEWAY")) {
+            throw Exception("No access")
         } else {
             return userService.upsertUser(dto)
         }
