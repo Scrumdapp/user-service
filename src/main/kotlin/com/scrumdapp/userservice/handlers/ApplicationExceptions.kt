@@ -23,6 +23,11 @@ class ServerFaultException(
     override val message: String
 ): AppException(status, message)
 
+class ServiceUnavailableException(
+    override val status: HttpStatus = HttpStatus.SERVICE_UNAVAILABLE,
+    override val message: String
+): AppException(status, message)
+
 open class AppException(
     open val status: HttpStatus,
     override val message: String = status.name

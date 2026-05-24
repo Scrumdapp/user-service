@@ -2,6 +2,7 @@ package com.scrumdapp.userservice.services
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.scrumdapp.userservice.handlers.ServerFaultException
+import com.scrumdapp.userservice.handlers.ServiceUnavailableException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -32,9 +33,6 @@ class GroupRequestService(
     fun fetchGroups(jwt: Jwt, userId: Long): List<Long> {
 
         val uri = "$fetchEndpoint/$userId"
-
-        println("$baseUrl$uri")
-
         try {
             val res = reqBuilder.get()
                 .uri(uri)
@@ -51,11 +49,7 @@ class GroupRequestService(
                 return mapper.readValue(body, object : TypeReference<List<GroupResponse>>() {}).map { it.id }
             }
         } catch (e: Exception) {
-            // Far from the cleanest way of doing this, but I cannot be bothered to also rewrite the error handling at this moment
-            println(jwt.tokenValue)
-            println(e)
-            return listOf(1, 2)
-//            throw ServerFaultException(message = "Something went wrong")
+            throw ServiceUnavailableException(message = "Downstream service is unreachable")
         }
     }
 }

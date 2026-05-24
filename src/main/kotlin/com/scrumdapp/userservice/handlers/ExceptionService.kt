@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.AuthenticationException
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
 
 data class ErrorResponse(
@@ -13,7 +13,7 @@ data class ErrorResponse(
     val message: String
 )
 
-@Component
+@Service
 class ExceptionService() {
 
     private val objectMapper: ObjectMapper = ObjectMapper()
@@ -35,7 +35,6 @@ class ExceptionService() {
 
         return when (ex) {
             is AppException -> {
-                println(ex.status)
                 ErrorResponse(
                     code = ex.status.value(),
                     message = ex.message

@@ -8,11 +8,9 @@ fun User.toResponseDto(): UserResponseDto {
     val fullName = name.split(" ")
     return UserResponseDto(
         id = id,
-        discordId = discordId,
         first_name = fullName.take(1).joinToString(),
         last_name = fullName.drop(1).joinToString(),
         avatar = profilePicture,
-        role = role.name
     )
 }
 
