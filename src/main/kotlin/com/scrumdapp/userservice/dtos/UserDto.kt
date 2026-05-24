@@ -5,7 +5,8 @@ import jakarta.validation.constraints.Size
 data class UserResponseDto(
     val id: Long,
     val discordId: Long,
-    val name: String? = null,
+    val first_name: String,
+    val last_name: String,
     val avatar: String? = null,
     val role: String
 )

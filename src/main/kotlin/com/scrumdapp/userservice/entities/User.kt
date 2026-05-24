@@ -25,7 +25,8 @@ class User {
     var discordId: Long = 0
 
     // Encrypt these values
-    var name: String? = null
+    @Column(nullable = false)
+    var name: String = ""
 
     var profilePicture: String? = null
 

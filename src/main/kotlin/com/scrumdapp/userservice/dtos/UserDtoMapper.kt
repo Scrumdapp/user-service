@@ -5,10 +5,12 @@ import com.scrumdapp.userservice.entities.User
 import com.scrumdapp.userservice.repositories.PartialUser
 
 fun User.toResponseDto(): UserResponseDto {
+    val fullName = name.split(" ")
     return UserResponseDto(
         id = id,
         discordId = discordId,
-        name = name,
+        first_name = fullName.take(1).joinToString(),
+        last_name = fullName.drop(1).joinToString(),
         avatar = profilePicture,
         role = role.name
     )
@@ -37,7 +39,7 @@ fun UserUpsertDto.toEntity(): User {
     return User().apply {
 
         discordId = this@toEntity.discordId
-        this.name = this@toEntity.name
+        this.name = this@toEntity.name.toString()
         profilePicture = this@toEntity.avatar
         role = Roles.valueOf(this@toEntity.role.uppercase())
     }
