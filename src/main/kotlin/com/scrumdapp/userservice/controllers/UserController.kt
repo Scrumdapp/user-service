@@ -2,16 +2,23 @@ package com.scrumdapp.userservice.controllers
 
 import com.scrumdapp.passportplugin.annotations.Passport
 import com.scrumdapp.passportplugin.jwt.PassportContent
+import com.scrumdapp.userservice.dtos.PartialUserResponseDto
+import com.scrumdapp.userservice.dtos.PassportDto
 import com.scrumdapp.userservice.dtos.UserUpsertDto
 import com.scrumdapp.userservice.dtos.UserPatchDto
 import com.scrumdapp.userservice.dtos.UserResponseDto
+import com.scrumdapp.userservice.handlers.NoAccessException
 import com.scrumdapp.userservice.services.UserService
 import jakarta.validation.Valid
+import org.springframework.http.HttpHeaders
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -19,6 +26,19 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: UserService,
 ) {
+    @GetMapping("/test")
+    fun getUsers(
+        @RequestParam(required = true) partial: Boolean = true,
+        @RequestParam(required = true) ids: List<Long>,
+        @RequestHeader(HttpHeaders.VIA) via: String?
+    ): List<PartialUserResponseDto> {
+        if (via == null || via != "group-service") {
+            throw NoAccessException(message = "You are not authorized to access this resource")
+        }
+
+        val users = userService.getPartialByIds(ids)
+        return users
+    }
 
     @GetMapping("/@me")
     fun getSelf(
@@ -38,13 +58,19 @@ class UserController(
     @GetMapping("/{userId}")
     fun getUser(
         @PathVariable userId: Long,
-        @Passport passport: PassportContent
     ): UserResponseDto {
-        // Will have to protect this endpoint more
         return userService.getById(userId)
     }
 
-    // Generally only approached from the gateway
+    // Only approached from the gateway
+    @GetMapping("/{userId}/passport")
+    fun getPassport(
+        @PathVariable userId: Long,
+    ): PassportDto {
+        return userService.generatePassport(userId)
+    }
+
+    // Only approached from the gateway to register users
     @PatchMapping("/gateway")
     fun updateUser(
         @Passport passport: PassportContent,
@@ -56,10 +82,5 @@ class UserController(
         } else {
             return userService.upsertUser(dto)
         }
-    }
-
-    @PatchMapping("/{userId}/role")
-    fun updateUserRole(@PathVariable userId: Long) {
-
     }
 }

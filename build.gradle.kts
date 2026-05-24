@@ -18,11 +18,18 @@ java {
 
 repositories {
     mavenCentral()
-    mavenLocal()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/Scrumdapp/passport-package")
+        credentials {
+            username = project.findProperty("gpr.user") as String
+            password = project.findProperty("gpr.token") as String
+        }
+    }
 }
 
 dependencies {
-    implementation("com.scrumdapp:passport-plugin:0.0.1-SNAPSHOT")
+    implementation("com.scrumdapp:passport-plugin:0.0.1")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.springframework.boot:spring-boot-starter-security")

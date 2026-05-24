@@ -2,6 +2,7 @@ package com.scrumdapp.userservice.dtos
 
 import com.scrumdapp.userservice.entities.Roles
 import com.scrumdapp.userservice.entities.User
+import com.scrumdapp.userservice.repositories.PartialUser
 
 fun User.toResponseDto(): UserResponseDto {
     return UserResponseDto(
@@ -13,7 +14,7 @@ fun User.toResponseDto(): UserResponseDto {
     )
 }
 
-fun User.toPartialResponseDto(): PartialUserResponseDto {
+fun PartialUser.toResponseDto(): PartialUserResponseDto {
     return PartialUserResponseDto(
         id = id,
         name = name,

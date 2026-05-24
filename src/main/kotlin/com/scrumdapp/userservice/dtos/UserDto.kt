@@ -2,7 +2,6 @@ package com.scrumdapp.userservice.dtos
 
 import jakarta.validation.constraints.Size
 
-
 data class UserResponseDto(
     val id: Long,
     val discordId: Long,
