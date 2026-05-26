@@ -25,9 +25,8 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it.requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("STUDENT", "COACH")
                 it.requestMatchers("/users/@me").hasAnyAuthority("STUDENT", "COACH")
-                it.requestMatchers(HttpMethod.GET, "/users/{userId}").hasAnyAuthority( "COACH", "GATEWAY")
-                it.requestMatchers("/users/gateway").hasAuthority("GATEWAY")
-                it.requestMatchers("/users/{userId}/role").hasAuthority("GATEWAY")
+                it.requestMatchers(HttpMethod.GET, "/users/{userId}").hasAnyAuthority( "STUDENT", "COACH", "GATEWAY")
+                it.requestMatchers(HttpMethod.PATCH, "/users/gateway").hasAuthority("GATEWAY")
                 it.requestMatchers("/users/{userId}/passport").hasAuthority("GATEWAY")
             }
             .exceptionHandling { ex -> ex
