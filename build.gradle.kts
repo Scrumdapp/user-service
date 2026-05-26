@@ -19,7 +19,7 @@ java {
 repositories {
     mavenCentral()
     maven {
-        name = "reposiliteRepositoryReleases"
+        name = "Scrumdapp packages"
         url = uri("https://maven.pkgs.scrumdapp.com/releases")
     }
 }
