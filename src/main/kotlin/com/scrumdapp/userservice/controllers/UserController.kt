@@ -26,6 +26,13 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: UserService,
 ) {
+    @GetMapping()
+    fun getUsers(
+        @RequestParam(required = true) ids: List<Long>,
+    ): List<PartialUserResponseDto> {
+        val users = userService.getPartialByIds(ids)
+        return users
+    }
 
     @GetMapping("/@me")
     fun getSelf(
