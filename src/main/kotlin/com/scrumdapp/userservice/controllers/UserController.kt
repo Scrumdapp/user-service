@@ -26,19 +26,6 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: UserService,
 ) {
-    @GetMapping("/test")
-    fun getUsers(
-        @RequestParam(required = true) partial: Boolean = true,
-        @RequestParam(required = true) ids: List<Long>,
-        @RequestHeader(HttpHeaders.VIA) via: String?
-    ): List<PartialUserResponseDto> {
-        if (via == null || via != "group-service") {
-            throw NoAccessException(message = "You are not authorized to access this resource")
-        }
-
-        val users = userService.getPartialByIds(ids)
-        return users
-    }
 
     @GetMapping("/@me")
     fun getSelf(
