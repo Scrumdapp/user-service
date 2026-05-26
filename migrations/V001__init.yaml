@@ -1,0 +1,25 @@
+operations:
+  - create_table:
+      columns:
+        - name: id
+          type: bigint
+        - name: discord_id
+          type: bigint
+        - name: name
+          type: varchar(255)
+        - name: profile_picture
+          nullable: true
+          type: varchar(255)
+        - name: role
+          nullable: true
+          type: varchar(255)
+      constraints:
+        - columns:
+            - id
+          name: pk_users
+          type: primary_key
+        - columns:
+            - discord_id
+          name: uc_users_discordid
+          type: unique
+      name: users
