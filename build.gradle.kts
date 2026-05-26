@@ -19,12 +19,8 @@ java {
 repositories {
     mavenCentral()
     maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/Scrumdapp/passport-package")
-        credentials {
-            username = project.findProperty("gpr.user") as String
-            password = project.findProperty("gpr.token") as String
-        }
+        name = "Scrumdapp packages"
+        url = uri("https://maven.pkgs.scrumdapp.com/releases")
     }
 }
 
