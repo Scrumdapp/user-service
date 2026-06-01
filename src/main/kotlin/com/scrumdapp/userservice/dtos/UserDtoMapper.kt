@@ -9,7 +9,7 @@ fun User.toResponseDto(): UserResponseDto {
     return UserResponseDto(
         id = id,
         first_name = fullName.take(1).joinToString(),
-        last_name = fullName.drop(1).joinToString(),
+        last_name = fullName.drop(1).joinToString(" "),
         avatar = profilePicture,
     )
 }
