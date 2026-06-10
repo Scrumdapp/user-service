@@ -6,6 +6,7 @@ data class UserResponseDto(
     val id: Long,
     val first_name: String,
     val last_name: String,
+    val roles: List<String>,
     val avatar: String? = null,
 )
 

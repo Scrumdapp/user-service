@@ -10,6 +10,7 @@ fun User.toResponseDto(): UserResponseDto {
         id = id,
         first_name = fullName.take(1).joinToString(),
         last_name = fullName.drop(1).joinToString(" "),
+        roles = listOf(role.name),
         avatar = profilePicture,
     )
 }
