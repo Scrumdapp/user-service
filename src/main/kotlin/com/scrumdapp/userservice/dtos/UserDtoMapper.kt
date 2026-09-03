@@ -28,7 +28,7 @@ fun User.patchFromDto(dto: UserPatchDto): User = apply {
 }
 
 fun User.patchFromDto(dto: UserUpsertDto): User = apply {
-    discordId = dto.discordId
+    email = dto.email
     role = Roles.valueOf(dto.role.uppercase())
     dto.name?.let { name = it }
     dto.avatar?.let { profilePicture = it }
@@ -37,7 +37,7 @@ fun User.patchFromDto(dto: UserUpsertDto): User = apply {
 fun UserUpsertDto.toEntity(): User {
     return User().apply {
 
-        discordId = this@toEntity.discordId
+        email = this@toEntity.email
         this.name = this@toEntity.name.toString()
         profilePicture = this@toEntity.avatar
         role = Roles.valueOf(this@toEntity.role.uppercase())
