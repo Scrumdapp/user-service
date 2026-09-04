@@ -11,7 +11,7 @@ interface PartialUser {
 @Repository
 interface UserRepository: JpaRepository<User, Long> {
 
-    fun findDistinctByDiscordId(discordId: Long): User?
+    fun findDistinctByEmail(email: String): User?
     fun findUserById(id: Long): User?
     fun findAllById(id: Long): List<PartialUser>
 }

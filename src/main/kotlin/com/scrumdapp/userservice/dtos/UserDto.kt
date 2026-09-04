@@ -27,7 +27,7 @@ data class UserPatchDto(
 
 data class UserUpsertDto(
 
-    val discordId: Long,
+    val email: String,
     val name: String? = null,
     val avatar: String? = null,
     val role: String

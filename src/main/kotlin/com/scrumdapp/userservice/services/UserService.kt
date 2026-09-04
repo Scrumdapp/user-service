@@ -38,11 +38,6 @@ class UserService(private val userRepository: UserRepository, private val groupR
         return users
     }
 
-    fun getByDiscordId(id: Long): UserResponseDto {
-        val user = userRepository.findDistinctByDiscordId(id) ?: throw NotFoundException(message = "User not found")
-        return user.toResponseDto()
-    }
-
     fun generatePassport(id: Long): PassportDto {
         val user = userRepository.findUserById(id) ?: throw NotFoundException(message = "User not found")
         val userGroups = fetchUserGroups(user.id)
@@ -54,7 +49,7 @@ class UserService(private val userRepository: UserRepository, private val groupR
     }
 
     fun upsertUser(dto: UserUpsertDto): UserResponseDto {
-        val user = userRepository.findDistinctByDiscordId(dto.discordId)
+        val user = userRepository.findDistinctByEmail(dto.email)
         if (user == null) {
             return userRepository.save(dto.toEntity()).toResponseDto()
         } else {

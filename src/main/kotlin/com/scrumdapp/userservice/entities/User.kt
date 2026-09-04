@@ -21,8 +21,8 @@ class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     val id: Long = 0
 
-    @Column(unique = true, nullable = false)
-    var discordId: Long = 0
+    @Column(unique = true)
+    var email: String = ""
 
     // Encrypt these values
     @Column(nullable = false)
