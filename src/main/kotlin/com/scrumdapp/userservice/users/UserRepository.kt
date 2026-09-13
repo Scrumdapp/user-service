@@ -1,6 +1,5 @@
-package com.scrumdapp.userservice.repositories
+package com.scrumdapp.userservice.users
 
-import com.scrumdapp.userservice.entities.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -8,6 +7,7 @@ interface PartialUser {
     val id: Long
     val name: String
 }
+
 @Repository
 interface UserRepository: JpaRepository<User, Long> {
 

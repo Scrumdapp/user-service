@@ -1,4 +1,4 @@
-package com.scrumdapp.userservice.grouprequests
+package com.scrumdapp.userservice.groupRequests
 
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty

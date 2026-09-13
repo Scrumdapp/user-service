@@ -1,8 +1,8 @@
-package com.scrumdapp.userservice.dtos
+package com.scrumdapp.userservice.users.dtos
 
-import com.scrumdapp.userservice.entities.Roles
-import com.scrumdapp.userservice.entities.User
-import com.scrumdapp.userservice.repositories.PartialUser
+import com.scrumdapp.userservice.users.Roles
+import com.scrumdapp.userservice.users.User
+import com.scrumdapp.userservice.users.PartialUser
 
 fun User.toResponseDto(): UserResponseDto {
     val fullName = name.split(" ")

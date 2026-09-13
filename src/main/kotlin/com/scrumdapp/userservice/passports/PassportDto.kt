@@ -1,4 +1,4 @@
-package com.scrumdapp.userservice.dtos
+package com.scrumdapp.userservice.passports
 
 data class PassportDto(
     val userId: Long = 0,
