@@ -8,6 +8,8 @@ import com.scrumdapp.userservice.dtos.UserResponseDto
 import com.scrumdapp.userservice.dtos.patchFromDto
 import com.scrumdapp.userservice.dtos.toEntity
 import com.scrumdapp.userservice.dtos.toResponseDto
+import com.scrumdapp.userservice.grouprequests.GroupRequestService
+import com.scrumdapp.userservice.grouprequests.GroupRequestServiceImpl
 import com.scrumdapp.userservice.handlers.NotFoundException
 import com.scrumdapp.userservice.handlers.ServerFaultException
 import com.scrumdapp.userservice.repositories.UserRepository
@@ -16,7 +18,10 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
 
 @Service
-class UserService(private val userRepository: UserRepository, private val groupRequestService: GroupRequestService){
+class UserService(
+    private val userRepository: UserRepository,
+    private val groupRequestService: GroupRequestService
+){
 
     fun getById(id: Long): UserResponseDto {
         val user = userRepository.findUserById(id) ?: throw NotFoundException(message = "User not found")
@@ -65,9 +70,7 @@ class UserService(private val userRepository: UserRepository, private val groupR
     }
 
     private fun fetchUserGroups(userId: Long): List<Long> {
-        val jwt = SecurityContextHolder.getContext().authentication?.principal as? Jwt
-            ?: throw ServerFaultException(message = "Auth principal couldn't be found or isn't a valid jwt. To prevent the endpoint is protected.")
-        return groupRequestService.fetchGroups(jwt, userId)
+        return groupRequestService.getUserGroups(userId)
     }
 
 }

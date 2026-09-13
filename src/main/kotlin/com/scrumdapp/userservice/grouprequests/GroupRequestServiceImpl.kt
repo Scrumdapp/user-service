@@ -1,12 +1,12 @@
-package com.scrumdapp.userservice.services
+package com.scrumdapp.userservice.grouprequests
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.scrumdapp.userservice.handlers.ServerFaultException
 import com.scrumdapp.userservice.handlers.ServiceUnavailableException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient.builder
@@ -20,19 +20,24 @@ data class GroupResponse(
 )
 
 @Service
-class GroupRequestService(
+class GroupRequestServiceImpl(
     @Value($$"${GROUP_SERVICE_URL}") private val baseUrl: String,
     @Value($$"${GROUP_FETCH_ENDPOINT}") private val fetchEndpoint: String = "/groups/user",
     @Value($$"${spring.application.name}") private val appName: String
-) {
-
+): GroupRequestService {
     private val reqBuilder = builder().baseUrl(baseUrl).build()
-
     private val mapper = ObjectMapper()
 
-    fun fetchGroups(jwt: Jwt, userId: Long): List<Long> {
-
+    override fun getUserGroups(userId: Long): List<Long> {
         val uri = "$fetchEndpoint/$userId"
+        val res = performGroupRequest<List<GroupResponse>>(uri).map { it.id }
+        return res
+    }
+
+    private fun <T> performGroupRequest(uri: String): T {
+
+        // Authentication principal does exist by this point
+        val jwt = SecurityContextHolder.getContext().authentication?.principal as Jwt
         try {
             val res = reqBuilder.get()
                 .uri(uri)
@@ -46,7 +51,7 @@ class GroupRequestService(
                 throw Exception("Unexpected response from user request")
             } else {
                 val body = res.body ?: throw Exception("Unexpected response from user request")
-                return mapper.readValue(body, object : TypeReference<List<GroupResponse>>() {}).map { it.id }
+                return mapper.readValue(body, object : TypeReference<T>() {})
             }
         } catch (e: Exception) {
             throw ServiceUnavailableException(message = "Downstream service is unreachable")
