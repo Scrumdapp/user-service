@@ -29,3 +29,8 @@ class User {
     @Enumerated(EnumType.STRING)
     var role: Roles = Roles.STUDENT
 }
+
+data class PartialUser(
+    val id: Long,
+    val name: String
+)

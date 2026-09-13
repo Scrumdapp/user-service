@@ -1,6 +1,5 @@
 package com.scrumdapp.userservice.groupRequests
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.scrumdapp.userservice.exceptions.ServiceUnavailableException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -13,11 +12,6 @@ import org.springframework.web.client.RestClient.builder
 import org.springframework.web.client.toEntity
 import tools.jackson.core.type.TypeReference
 import tools.jackson.databind.ObjectMapper
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class GroupResponse(
-    val id: Long,
-)
 
 @Service
 class GroupRequestServiceImpl(
