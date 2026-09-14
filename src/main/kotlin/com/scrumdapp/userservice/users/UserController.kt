@@ -2,6 +2,7 @@ package com.scrumdapp.userservice.users
 
 import com.scrumdapp.passportplugin.annotations.Passport
 import com.scrumdapp.passportplugin.jwt.PassportContent
+import com.scrumdapp.userservice.exceptions.NoAccessException
 import com.scrumdapp.userservice.users.dtos.UserPatchDto
 import com.scrumdapp.userservice.users.dtos.UserResponseDto
 import com.scrumdapp.userservice.users.dtos.UserUpsertDto
@@ -49,7 +50,7 @@ class UserController(
     ): UserResponseDto {
         val roles = passport.roles
         if (!roles.isNullOrEmpty() && !roles.contains("GATEWAY")) {
-            throw Exception("No access")
+            throw NoAccessException(message = "Forbidden")
         } else {
             return userService.upsert(dto)
         }
