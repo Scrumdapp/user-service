@@ -13,7 +13,8 @@ data class UserResponseDto(
 
 data class PartialUserResponseDto(
     val id: Long,
-    val name: String? = null,
+    val first_name: String,
+    val last_name: String,
 )
 
 data class UserPatchDto(

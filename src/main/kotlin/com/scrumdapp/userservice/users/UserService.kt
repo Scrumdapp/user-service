@@ -1,5 +1,6 @@
 package com.scrumdapp.userservice.users
 
+import com.scrumdapp.passportplugin.jwt.PassportContent
 import com.scrumdapp.userservice.users.dtos.UserUpsertDto
 import com.scrumdapp.userservice.users.dtos.UserPatchDto
 import com.scrumdapp.userservice.users.dtos.UserResponseDto
@@ -9,6 +10,8 @@ import com.scrumdapp.userservice.users.dtos.toResponseDto
 import com.scrumdapp.userservice.groupRequests.GroupRequestService
 import com.scrumdapp.userservice.exceptions.NoAccessException
 import com.scrumdapp.userservice.exceptions.NotFoundException
+import com.scrumdapp.userservice.exceptions.ServerFaultException
+import com.scrumdapp.userservice.users.dtos.PartialUserResponseDto
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,10 +25,16 @@ class UserService(
         return user.toResponseDto()
     }
 
-    fun getById(userId: Long, ownId: Long): UserResponseDto {
-        hasMutualGroup(ownId, userId)
+    fun getById(userId: Long, ownPassport: PassportContent): UserResponseDto {
+        hasMutualGroup(ownPassport, userId)
         val user = userRepository.findUserById(userId) ?: throw NotFoundException(message = "User not found")
         return user.toResponseDto()
+    }
+
+    fun getAllByGroup(groupId: Long): List<PartialUserResponseDto> {
+        val userIds = groupRequestService.getUserGroups(groupId)
+
+        return userRepository.findBulkByIds(userIds).map { it.toResponseDto() }
     }
 
     fun upsert(dto: UserUpsertDto): UserResponseDto {
@@ -44,11 +53,13 @@ class UserService(
         return userRepository.save(user).toResponseDto()
     }
 
-    private fun hasMutualGroup(ownId: Long, targetId: Long) {
-        val ownGroups = groupRequestService.getUserGroups(ownId)
+    private fun hasMutualGroup(ownPassport: PassportContent, targetId: Long) {
+        val ownGroups = ownPassport.userGroups
         val targetGroups = groupRequestService.getUserGroups(targetId)
 
-        val hasCommon = ownGroups.any { it in targetGroups }
+
+        if (ownGroups.isNullOrEmpty()) throw ServerFaultException(message = "Groups cannot be null")
+        val hasCommon = ownGroups.any { it.toLong() in targetGroups }
         if (!hasCommon) {
             throw NoAccessException(message = "No access to this user")
         }

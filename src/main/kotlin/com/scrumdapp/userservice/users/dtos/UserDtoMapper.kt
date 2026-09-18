@@ -16,9 +16,11 @@ fun User.toResponseDto(): UserResponseDto {
 }
 
 fun PartialUser.toResponseDto(): PartialUserResponseDto {
+    val fullName = name.split(" ")
     return PartialUserResponseDto(
         id = id,
-        name = name,
+        first_name = fullName.take(1).joinToString(),
+        last_name = fullName.drop(1).joinToString(" "),
     )
 }
 

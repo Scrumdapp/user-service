@@ -3,6 +3,7 @@ package com.scrumdapp.userservice.users
 import com.scrumdapp.passportplugin.annotations.Passport
 import com.scrumdapp.passportplugin.jwt.PassportContent
 import com.scrumdapp.userservice.exceptions.NoAccessException
+import com.scrumdapp.userservice.users.dtos.PartialUserResponseDto
 import com.scrumdapp.userservice.users.dtos.UserPatchDto
 import com.scrumdapp.userservice.users.dtos.UserResponseDto
 import com.scrumdapp.userservice.users.dtos.UserUpsertDto
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -39,7 +41,19 @@ class UserController(
         @PathVariable userId: Long,
         @Passport passport: PassportContent
     ): UserResponseDto {
-        return userService.getById(userId, passport.userId.toLong())
+        return userService.getById(userId, passport)
+    }
+
+    @GetMapping("/group")
+    fun getGroup(
+        @RequestParam(required = true) id: Long,
+        @Passport passport: PassportContent
+    ): List<PartialUserResponseDto> {
+        if (passport.userGroups.isNullOrEmpty() || passport.userGroups?.contains(id.toInt()) == false) {
+            throw NoAccessException(message = "You are not allowed to access this group")
+        }
+
+        return userService.getAllByGroup(id)
     }
 
     // Only approached from the gateway to register users
