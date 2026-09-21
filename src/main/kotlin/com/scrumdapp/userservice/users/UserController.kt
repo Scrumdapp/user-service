@@ -36,14 +36,6 @@ class UserController(
         return userService.patch(dto, passport.userId.toLong())
     }
 
-    @GetMapping("/{userId}")
-    fun getUser(
-        @PathVariable userId: Long,
-        @Passport passport: PassportContent
-    ): UserResponseDto {
-        return userService.getById(userId, passport)
-    }
-
     @GetMapping("/group")
     fun getGroup(
         @RequestParam(required = true) id: Long,
