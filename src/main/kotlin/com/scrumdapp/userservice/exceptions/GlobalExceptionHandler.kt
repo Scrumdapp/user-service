@@ -1,4 +1,4 @@
-package com.scrumdapp.userservice.handlers
+package com.scrumdapp.userservice.exceptions
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler

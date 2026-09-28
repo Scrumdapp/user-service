@@ -1,9 +1,9 @@
-package com.scrumdapp.userservice.configs
+package com.scrumdapp.userservice.security
 
-import com.scrumdapp.userservice.handlers.CustomAuthEntrypointHandler
+import com.scrumdapp.userservice.exceptions.CustomAuthEntrypointHandler
 import com.scrumdapp.passportplugin.filters.PassportAuthFilter
 import com.scrumdapp.passportplugin.filters.usePassport
-import com.scrumdapp.userservice.handlers.CustomAccessDeniedHandler
+import com.scrumdapp.userservice.exceptions.CustomAccessDeniedHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -23,11 +23,11 @@ class SecurityConfig(
             .csrf { it.disable() }
             .usePassport(passportAuthFilter)
             .authorizeHttpRequests {
-                it.requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("STUDENT", "COACH")
                 it.requestMatchers("/users/@me").hasAnyAuthority("STUDENT", "COACH")
-                it.requestMatchers(HttpMethod.GET, "/users/{userId}").hasAnyAuthority( "STUDENT", "COACH", "GATEWAY")
+                it.requestMatchers("/users/group").hasAnyAuthority("STUDENT", "COACH")
                 it.requestMatchers(HttpMethod.PATCH, "/users/gateway").hasAuthority("GATEWAY")
                 it.requestMatchers("/users/{userId}/passport").hasAuthority("GATEWAY")
+                it.requestMatchers("/swagger-ui/*","/v3/api-docs*/**").permitAll()
             }
             .exceptionHandling { ex -> ex
                 .authenticationEntryPoint(CustomAuthEntrypointHandler())

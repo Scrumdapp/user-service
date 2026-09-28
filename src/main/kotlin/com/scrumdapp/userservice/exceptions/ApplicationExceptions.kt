@@ -1,7 +1,6 @@
-package com.scrumdapp.userservice.handlers
+package com.scrumdapp.userservice.exceptions
 
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 
 class NotAuthorizedException(
     override val status: HttpStatus = HttpStatus.UNAUTHORIZED,

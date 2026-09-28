@@ -1,4 +1,4 @@
-package com.scrumdapp.userservice.handlers
+package com.scrumdapp.userservice.exceptions
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

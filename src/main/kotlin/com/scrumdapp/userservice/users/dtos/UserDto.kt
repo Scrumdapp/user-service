@@ -1,5 +1,6 @@
-package com.scrumdapp.userservice.dtos
+package com.scrumdapp.userservice.users.dtos
 
+import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.Size
 
 data class UserResponseDto(
@@ -12,23 +13,26 @@ data class UserResponseDto(
 
 data class PartialUserResponseDto(
     val id: Long,
-    val name: String? = null,
+    val first_name: String,
+    val last_name: String,
 )
 
 data class UserPatchDto(
-
     @Size(max = 50)
     val firstName: String? = null,
-    @Size(max = 100)
+    @Size(max = 50)
     val lastName: String? = null,
 
+    @Size(max = 100)
     val avatar: String? = null,
 )
 
 data class UserUpsertDto(
-
+    @Email
     val email: String,
+    @Size(max = 80)
     val name: String? = null,
+    @Size(max = 100)
     val avatar: String? = null,
     val role: String
 )
