@@ -1,6 +1,6 @@
 package com.scrumdapp.userservice.users
 
-import com.scrumdapp.passportplugin.annotations.Passport
+import com.scrumdapp.passportplugin.annotations.passportController.Passport
 import com.scrumdapp.passportplugin.jwt.PassportContent
 import com.scrumdapp.userservice.exceptions.NoAccessException
 import com.scrumdapp.userservice.users.dtos.PartialUserResponseDto
@@ -21,11 +21,20 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: UserService,
 ) {
+
+    @GetMapping
+    fun getUsers(
+        @RequestParam(required = true) ids: List<Long>,
+    ): List<PartialUserResponseDto> {
+        val users = userService.getUsersByIds(ids)
+        return users
+    }
+
     @GetMapping("/@me")
     fun getCurrentUser(
         @Passport passport: PassportContent
     ): UserResponseDto {
-        return userService.getSelf(passport.userId.toLong())
+        return userService.getUserById(passport.userId, passport)
     }
 
     @PatchMapping("/@me")
@@ -33,32 +42,34 @@ class UserController(
         @Passport passport: PassportContent,
         @Valid @RequestBody dto: UserPatchDto
     ): UserResponseDto {
-        return userService.patch(dto, passport.userId.toLong())
+        return userService.patchUser(dto, passport.userId)
     }
 
-    @GetMapping("/group")
+    @GetMapping("/{id}")
+    fun getUserById(
+        @Passport passport: PassportContent,
+        @PathVariable id: Long
+    ): UserResponseDto {
+        return userService.getUserById(id, passport)
+    }
+
+    @GetMapping("/users")
     fun getGroup(
-        @RequestParam(required = true) id: Long,
+        @RequestParam(required = true) groupId: Long,
         @Passport passport: PassportContent
     ): List<PartialUserResponseDto> {
-        if (passport.userGroups.isNullOrEmpty() || passport.userGroups?.contains(id.toInt()) == false) {
+        if (passport.userGroups.isEmpty() || passport.userGroups.contains(groupId)) {
             throw NoAccessException(message = "You are not allowed to access this group")
         }
 
-        return userService.getAllByGroup(id)
+        return userService.getUsersByGroup(groupId)
     }
 
     // Only approached from the gateway to register users
     @PatchMapping("/gateway")
     fun updateUser(
-        @Passport passport: PassportContent,
         @RequestBody dto: UserUpsertDto
     ): UserResponseDto {
-        val roles = passport.roles
-        if (!roles.isNullOrEmpty() && !roles.contains("GATEWAY")) {
-            throw NoAccessException(message = "Forbidden")
-        } else {
-            return userService.upsert(dto)
-        }
+        return userService.upsertUser(dto)
     }
 }

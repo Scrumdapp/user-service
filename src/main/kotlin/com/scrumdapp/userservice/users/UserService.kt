@@ -19,25 +19,26 @@ class UserService(
     private val userRepository: UserRepository,
     private val groupRequestService: GroupRequestService
 ){
+    fun getUserById(userId: Long, ownPassport: PassportContent): UserResponseDto {
 
-    fun getSelf(id: Long): UserResponseDto {
-        val user = userRepository.findUserById(id) ?: throw NotFoundException(message = "User not found")
-        return user.toResponseDto()
-    }
-
-    fun getById(userId: Long, ownPassport: PassportContent): UserResponseDto {
-        hasMutualGroup(ownPassport, userId)
+        if (ownPassport.userId.toLong() != userId) {
+            hasMutualGroup(ownPassport, userId)
+        }
         val user = userRepository.findUserById(userId) ?: throw NotFoundException(message = "User not found")
         return user.toResponseDto()
     }
 
-    fun getAllByGroup(groupId: Long): List<PartialUserResponseDto> {
+    fun getUsersByIds(ids: List<Long>): List<PartialUserResponseDto> {
+        return userRepository.findBulkByIds(ids).map { it.toResponseDto() }
+    }
+
+    fun getUsersByGroup(groupId: Long): List<PartialUserResponseDto> {
         val userIds = groupRequestService.getUserGroups(groupId)
 
         return userRepository.findBulkByIds(userIds).map { it.toResponseDto() }
     }
 
-    fun upsert(dto: UserUpsertDto): UserResponseDto {
+    fun upsertUser(dto: UserUpsertDto): UserResponseDto {
         val user = userRepository.findDistinctByEmail(dto.email)
         if (user == null) {
             return userRepository.save(dto.toEntity()).toResponseDto()
@@ -47,7 +48,7 @@ class UserService(
         }
     }
 
-    fun patch(dto: UserPatchDto, userId: Long): UserResponseDto {
+    fun patchUser(dto: UserPatchDto, userId: Long): UserResponseDto {
         val user = userRepository.findUserById(userId) ?: throw NotFoundException(message = "User with id $userId not found")
         user.patchFromDto(dto)
         return userRepository.save(user).toResponseDto()

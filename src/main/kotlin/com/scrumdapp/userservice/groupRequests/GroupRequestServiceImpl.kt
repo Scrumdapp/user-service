@@ -15,8 +15,8 @@ import tools.jackson.databind.ObjectMapper
 
 @Service
 class GroupRequestServiceImpl(
-    @Value($$"${GROUP_SERVICE_URL}") private val baseUrl: String,
-    @Value($$"${GROUP_FETCH_ENDPOINT}") private val fetchEndpoint: String = "/groups/user",
+    @Value($$"${groupService.url}") private val baseUrl: String,
+    @Value($$"${groupService.userEndpoint}") private val fetchEndpoint: String = "/groups/user",
     @Value($$"${spring.application.name}") private val appName: String
 ): GroupRequestService {
     private val reqBuilder = builder().baseUrl(baseUrl).build()

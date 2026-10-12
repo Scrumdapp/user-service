@@ -3,11 +3,12 @@ package com.scrumdapp.userservice.groupRequests
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty
 import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
 @Service
 @Primary
-@ConditionalOnBooleanProperty(name=["USE_MOCK_SERVICE"], havingValue = true)
+@Profile("use_mock_service")
 class MockGroupRequestService: GroupRequestService {
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
